@@ -3,11 +3,11 @@
 namespace App\Console\Commands;
 
 use App\Models\City;
-use App\Models\WeatherInformation;
+use App\Repositories\CityRepository;
+use App\Repositories\CityRepositoryInterface;
 use App\Repositories\WeatherInformationRepository;
 use App\Services\Weather\WeatherService;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SaveCitiesCurrentWeatherInformation extends Command
@@ -31,9 +31,13 @@ class SaveCitiesCurrentWeatherInformation extends Command
     /**
      * Execute the console command.
      */
-    public function handle(WeatherService $weather_service, WeatherInformationRepository $weather_information_repository)
+    public function handle(
+        WeatherService               $weather_service,
+        WeatherInformationRepository $weather_information_repository,
+        CityRepositoryInterface      $city_repository
+    )
     {
-        $cities = City::get();
+        $cities = $city_repository->getAllCity();
 
         foreach ($cities as $city) {
             try {
