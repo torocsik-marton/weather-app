@@ -14,4 +14,10 @@ class CityRepository implements CityRepositoryInterface
     {
         return City::get();
     }
+
+
+    public function getCityByName(string $name): City
+    {
+        return City::where('name', $name)->first();
+    }
 }

@@ -2,8 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Models\City;
-use App\Repositories\CityRepository;
 use App\Repositories\CityRepositoryInterface;
 use App\Repositories\WeatherInformationRepository;
 use App\Services\Weather\WeatherService;

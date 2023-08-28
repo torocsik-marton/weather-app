@@ -16,3 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/cities/{city}', '\App\Http\Controllers\CityController@getCity');
+Route::get('/cities/{city_name}/weather-information', '\App\Http\Controllers\CityController@getWeatherInformation');

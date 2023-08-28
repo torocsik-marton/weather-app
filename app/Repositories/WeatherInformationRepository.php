@@ -13,11 +13,11 @@ class WeatherInformationRepository implements WeatherInformationRepositoryInterf
 
     public function createWeatherInformation(WeatherData $weather_data, City $city): WeatherInformation
     {
-        return WeatherInformation::create([
-           array_merge(
-               $weather_data->toArray(),
-               ['city_id' => $city->id]
-           )
-        ]);
+        return WeatherInformation::create(
+            array_merge(
+                $weather_data->toArray(),
+                ['city_id' => $city->id],
+            )
+        );
     }
 }
