@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
-class SaveWeatherInformation extends Command
+class SaveCitiesCurrentWeatherInformation extends Command
 {
 
     /**
@@ -18,14 +18,14 @@ class SaveWeatherInformation extends Command
      *
      * @var string
      */
-    protected $signature = 'app:save-weather-information';
+    protected $signature = 'app:save-cities-current-weather-information';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Saves all cities current weather information to the database.';
 
 
     /**
