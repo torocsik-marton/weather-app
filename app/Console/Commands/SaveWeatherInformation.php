@@ -4,9 +4,11 @@ namespace App\Console\Commands;
 
 use App\Models\City;
 use App\Models\WeatherInformation;
+use App\Repositories\WeatherInformationRepository;
 use App\Services\Weather\WeatherService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class SaveWeatherInformation extends Command
 {
@@ -29,26 +31,17 @@ class SaveWeatherInformation extends Command
     /**
      * Execute the console command.
      */
-    public function handle(WeatherService $weather_service)
+    public function handle(WeatherService $weather_service, WeatherInformationRepository $weather_information_repository)
     {
         $cities = City::get();
 
         foreach ($cities as $city) {
-            $weather_data = $weather_service->getCurrentWeatherByCoordinates($city->latitude, $city->longitude);
-
-            $weather_information                   = new WeatherInformation();
-            $weather_information->city_id          = $city->id;
-            $weather_information->name             = $weather_data->name;
-            $weather_information->latitude         = $weather_data->latitude;
-            $weather_information->longitude        = $weather_data->longitude;
-            $weather_information->time             = now();
-            $weather_information->temp_celsius     = $weather_data->temp_celsius;
-            $weather_information->max_temp_celsius = $weather_data->max_temp_celsius;
-            $weather_information->min_temp_celsius = $weather_data->min_temp_celsius;
-            $weather_information->pressure         = $weather_data->pressure;
-            $weather_information->humidity         = $weather_data->humidity;
-
-            $weather_information->save();
+            try {
+                $weather_data = $weather_service->getCurrentWeatherByCoordinates($city->latitude, $city->longitude);
+                $weather_information_repository->createWeatherInformation($weather_data, $city);
+            } catch (\Exception $exception) {
+                Log::error($exception);
+            }
         }
     }
 }
