@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\City;
 use App\Models\WeatherInformation;
+use App\Services\Weather\WeatherService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 
@@ -28,30 +29,24 @@ class SaveWeatherInformation extends Command
     /**
      * Execute the console command.
      */
-    public function handle()
+    public function handle(WeatherService $weather_service)
     {
         $cities = City::get();
 
         foreach ($cities as $city) {
-            $response = Http::get(env('OPEN_WEATHER_API_ENDPOINT') . 'data/2.5/weather?lat=' . $city->latitude . '&lon=' . $city->longitude . '&appid=' . env('OPEN_WEATHER_API_KEY') . '&units=metric');
-
-            if (!$response->ok()) {
-                continue;
-            }
-
-            $open_weather_content = $response->json();
+            $weather_data = $weather_service->getCurrentWeatherByCoordinates($city->latitude, $city->longitude);
 
             $weather_information                   = new WeatherInformation();
             $weather_information->city_id          = $city->id;
-            $weather_information->name             = $open_weather_content['weather'][0]['main'];
-            $weather_information->latitude         = $open_weather_content['coord']['lat'];
-            $weather_information->longitude        = $open_weather_content['coord']['lon'];
+            $weather_information->name             = $weather_data->name;
+            $weather_information->latitude         = $weather_data->latitude;
+            $weather_information->longitude        = $weather_data->longitude;
             $weather_information->time             = now();
-            $weather_information->temp_celsius     = $open_weather_content['main']['temp'];
-            $weather_information->max_temp_celsius = $open_weather_content['main']['temp_max'];
-            $weather_information->min_temp_celsius = $open_weather_content['main']['temp_min'];
-            $weather_information->pressure         = $open_weather_content['main']['pressure'];
-            $weather_information->humidity         = $open_weather_content['main']['humidity'];
+            $weather_information->temp_celsius     = $weather_data->temp_celsius;
+            $weather_information->max_temp_celsius = $weather_data->max_temp_celsius;
+            $weather_information->min_temp_celsius = $weather_data->min_temp_celsius;
+            $weather_information->pressure         = $weather_data->pressure;
+            $weather_information->humidity         = $weather_data->humidity;
 
             $weather_information->save();
         }
